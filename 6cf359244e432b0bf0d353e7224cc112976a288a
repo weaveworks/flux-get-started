@@ -1,0 +1,1 @@
+{"jobID":"54b22a1d-d155-02a9-9ea7-09baf81f53df","spec":{"type":"policy","cause":{"Message":"Freeze for now","User":"Stefan Prodan \u003cstefan@weave.works\u003e"},"spec":{"demo:deployment/podinfo":{"add":{"locked":"true","locked_msg":"\"Freeze for now\"","locked_user":"Stefan Prodan \u003cstefan@weave.works\u003e"},"remove":null}}},"result":null}
