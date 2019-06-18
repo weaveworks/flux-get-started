@@ -7,4 +7,4 @@ metadata:
   name: redis-auth
   namespace: demo
 data:
-  values.yaml: cGFzc3dvcmQ6IGFkbWlu
+  values.yaml: cGFzc3dvcmQ6IHNlY3JldHJlZGlzcGFzc3dvcmQK
