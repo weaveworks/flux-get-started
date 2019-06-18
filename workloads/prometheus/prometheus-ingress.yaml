@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  namespace: tiller-world
+spec:
+  rules:
+  - host: kube.lucassimpson.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: newbie-beetle-prometheus-server
+          servicePort: 80
+
