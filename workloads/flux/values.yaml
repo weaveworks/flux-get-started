@@ -1,0 +1,24 @@
+git:
+  url: git@github.com:lucassimpson/flux-get-started
+  path: cluster,workloads
+
+image:
+  repository: weaveworks/flux
+
+helmOperator:
+  repository: weaveworks/helm-operator
+  create: true
+  createCRD: false
+  tillerNamespace: tiller-world
+  tls:
+    enable: true
+
+prometheus:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    memory: 125Mi
