@@ -47,7 +47,7 @@ spec:
         - --random-error=false
         env:
         - name: PODINFO_UI_MESSAGE
-          value: "Fuck your demo!"
+          value: "Fuck your demo this time with TAGS!"
         livenessProbe:
           httpGet:
             path: /healthz
