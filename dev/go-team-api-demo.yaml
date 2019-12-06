@@ -1,0 +1,73 @@
+---
+---
+# Source: go-team-api/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "go-team-api-dev"
+
+---
+
+# Source: go-team-api/templates/go-team-api.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: go-team-api
+    service: go-team-api
+spec:
+  ports:
+  - name: 8080-8080
+    port: 9080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: go-team-api
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-team-api
+  creationTimestamp: null
+  labels:
+    app: go-team-api
+    version: 0.2.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-team-api
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: go-team-api
+    spec:
+      containers:
+      - image: "docker.io/cbellee/go-team-api:7b310d5"
+        name: go-team-api
+        env:
+        - name: DB_NAME
+          value: goteamapidb
+        - name: DB_USER_NAME
+          value: root
+        - name: DB_PASSWORD
+          value: Micr0s0ft123
+        - name: DB_HOST_NAME
+          value: mysql-release
+        - name: DB_PROTOCOL
+          value: tcp
+        - name: DB_PORT
+          value: 3606
+        resources: {}
+        
+status: {}
+
+
