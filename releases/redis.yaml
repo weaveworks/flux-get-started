@@ -28,11 +28,11 @@ spec:
       type: ClusterIP
       port: 6379
     cluster:
-      enabled: false
+      enabled: true
     master:
       securityContext:
         enabled: false
-        fsGroup: 0
-        runAsUser: 0
+        fsGroup: 1000
+        runAsUser: 1000
       persistence:
-        enabled: false
+        enabled: true
