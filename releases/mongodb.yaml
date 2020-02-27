@@ -16,7 +16,7 @@ spec:
   values:
     image:
       repository: bitnami/mongodb
-      tag: 4.0.13
+      tag: 4.0.14
     usePassword: false
     persistence:
       enabled: false
