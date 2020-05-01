@@ -28,7 +28,7 @@ spec:
     spec:
       initContainers:
       - name: init
-        image: alpine:3.10.1
+        image: alpine:3.10
         command:
         - sleep
         - "1"
@@ -37,27 +37,27 @@ spec:
         image: stefanprodan/podinfo:3.1.0
         imagePullPolicy: IfNotPresent
         ports:
-          - name: http
-            containerPort: 9898
-            protocol: TCP
-          - name: http-metrics
-            containerPort: 9797
-            protocol: TCP
-          - name: grpc
-            containerPort: 9999
-            protocol: TCP
+        - name: http
+          containerPort: 9898
+          protocol: TCP
+        - name: http-metrics
+          containerPort: 9797
+          protocol: TCP
+        - name: grpc
+          containerPort: 9999
+          protocol: TCP
         command:
-          - ./podinfo
-          - --port=9898
-          - --port-metrics=9797
-          - --grpc-port=9999
-          - --grpc-service-name=podinfo
-          - --level=info
-          - --random-delay=false
-          - --random-error=false
+        - ./podinfo
+        - --port=9898
+        - --port-metrics=9797
+        - --grpc-port=9999
+        - --grpc-service-name=podinfo
+        - --level=info
+        - --random-delay=false
+        - --random-error=false
         env:
-          - name: PODINFO_UI_COLOR
-            value: "#34577c"
+        - name: PODINFO_UI_COLOR
+          value: "#34577c"
         livenessProbe:
           httpGet:
             path: /healthz
