@@ -10,9 +10,11 @@ metadata:
 spec:
   releaseName: ghost
   chart:
-    git: ssh://git@github.com/fluxcd/flux-get-started
+    git: https://github.com/SNakano/flux-get-started
     ref: master
     path: charts/ghost
+    secretRef:
+      name: git-https-credentials
   values:
     image:
       repository: bitnami/ghost
