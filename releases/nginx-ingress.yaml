@@ -1,0 +1,76 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: nginx-ingress
+  namespace: tkww-system
+  annotations:
+    fluxcd.io/automated: "false"
+    fluxcd.io/tag.chart-image: glob:3.1.1-debian-9-*
+spec:
+  releaseName: nginx-ingress
+  chart:
+    repository: http://s3-chart-proxy.clusters.xogrp.com/infrastructure
+    name: tkww-infrastructure
+    path: infrastructure
+  values:
+    controller:
+      replicaCount: 2
+
+      resources:
+        requests:
+          memory: 1Gi
+          cpu: 150m
+        limits:
+          memory: 2Gi
+          cpu: 500m
+
+      service:
+        healthCheckNodePort: 0
+        nodePorts:
+          http: 30080
+          https: 30443
+        targetPorts:
+          http: 80
+          https: 443
+        type: NodePort
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+    
+      metrics:
+        enabled: true
+        service:
+          annotations:
+            prometheus.io/scrape: "true"
+        serviceMonitor:
+            enabled: true
+
+      autoscaling:
+        enabled: true
+        minReplicas: 3
+        maxReplicas: 20
+        targetCPUUtilizationPercentage: 50
+        targetMemoryUtilizationPercentage: 50
+
+      config:
+        proxy-connect-timeout: "15"
+        proxy-read-timeout: "600"
+        proxy-send-timeout: "600"
+        hsts-include-subdomains: "false"
+        body-size: "64m"
+        server-name-hash-bucket-size: "256"
+        client-header-buffer-size: "16k"
+        large-client-header-buffers: "4 32k"
+        enable-underscores-in-headers: "true"
+        use-forwarded-headers: "true"
+        compute-full-forwarded-for: "true"
+        real-ip-header: "proxy_protocol"
+        use-proxy-protocol: "true"
+
+
+    defaultBackend:
+      resources:
+        requests:
+          memory: 150Mi
+        limits:
+          memory: 500Mi
