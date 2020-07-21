@@ -10,9 +10,9 @@ metadata:
 spec:
   releaseName: nginx-ingress
   chart:
-    repository: http://s3-chart-proxy.clusters.xogrp.com/infrastructure
-    name: tkww-infrastructure
-    path: infrastructure
+    repository: https://kubernetes-charts.storage.googleapis.com
+    name: nginx-ingress
+    path: stable/nginx-ingress
   values:
     controller:
       replicaCount: 2
