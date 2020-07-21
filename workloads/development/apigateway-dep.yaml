@@ -7,9 +7,9 @@
 #
 apiVersion: apps/v1
 kind: Deployment
-namespace: development
 metadata:
   name: apigateway
+  namespace: development
   labels:
     app: apigateway
 spec:

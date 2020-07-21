@@ -1,9 +1,9 @@
 # An example service for the deployment above.
 apiVersion: v1
 kind: Service
-namespace: development
 metadata:
   name: api-gateway-service
+  namespace: development
   labels:
     app.kubernetes.io/name: api-gateway-deployment-external-es
 spec:
