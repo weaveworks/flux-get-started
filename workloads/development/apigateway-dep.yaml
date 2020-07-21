@@ -1,0 +1,69 @@
+# Configuration for deploying an API Gateway without elasticsearch to a kubernetes cluster.
+# An external elasticsearch needs to be up and running.
+# The cluster should provide at least 4 GB of main memory.
+#
+# The full documentation is available from the Software AG Documentation website: 
+# http://techcommunity.softwareag.com/ecosystem/documentation/webmethods/api_gateway/yai10-4/index.htm
+#
+apiVersion: apps/v1
+kind: Deployment
+namespace: development
+metadata:
+  name: apigateway
+  labels:
+    app: apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway
+  template:
+    metadata:
+      labels:
+        app: apigateway
+    spec:
+      containers:
+      - name: apigateway
+        # Please fill in the path to your api gateway image stored in a docker registry.
+        image: harbor.aks.au-poc.com/library/softwareag/apigateway-trial:10.5.0.2
+        # The default pull policy is IfNotPresent which causes the Kubelet to skip pulling an image if it already exists.
+        # If you would like to always force a pull use "Always"        
+        imagePullPolicy: IfNotPresent
+        env:
+        # Please fill in your datas to access your external elasticsearch.
+        # Url pointing to your running elasticsearch for example: 127.0.0.1:9200
+        - name: apigw_elasticsearch_hosts
+          value: "elasticsearch-service.monitor:9200"
+        # Use true if your elasticsearch has https enabled, false if not.
+        - name: "apigw_elasticsearch_https_enabled"
+          value: "false"
+        - name: "apigw_elasticsearch_http_username"
+          value: null
+        - name: "apigw_elasticsearch_http_password"
+          value: null
+        # Ports used in the docker image, the default ports are 5555 and 9072
+        ports:
+        - containerPort: 5555
+          name: 5555tcp01
+          protocol: TCP
+        - containerPort: 9072
+          name: 9072tcp01
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 4
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5555
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /rest/apigateway/health
+            port: 5555
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 2

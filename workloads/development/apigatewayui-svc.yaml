@@ -1,0 +1,17 @@
+# An example service for the deployment above.
+apiVersion: v1
+kind: Service
+namespace: development
+metadata:
+  name: api-gatewayui-service
+  labels:
+    app.kubernetes.io/name: api-gateway-deployment-external-es
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9072
+      targetPort: 9072
+      protocol: TCP 
+  selector:
+    app: api-gateway-deployment-external-es
