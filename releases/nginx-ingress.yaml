@@ -12,7 +12,6 @@ spec:
   chart:
     repository: https://kubernetes-charts.storage.googleapis.com
     name: nginx-ingress
-    path: stable/nginx-ingress
   values:
     controller:
       replicaCount: 2
