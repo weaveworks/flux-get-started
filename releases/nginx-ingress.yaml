@@ -19,10 +19,10 @@ spec:
 
       resources:
         requests:
-          memory: 1Gi
+          memory: 500Mi
           cpu: 150m
         limits:
-          memory: 2Gi
+          memory: 1Gi
           cpu: 500m
 
       service:
