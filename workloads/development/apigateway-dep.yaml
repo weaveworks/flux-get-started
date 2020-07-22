@@ -8,50 +8,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apigateway
-  namespace: development
+  name: api-gateway-deployment
   labels:
-    app: apigateway
+    app: api-gateway-deployment
 spec:
   replicas: 1
+  
   selector:
     matchLabels:
-      app: apigateway
+      app: api-gateway-deployment
   template:
     metadata:
       labels:
-        app: apigateway
+        app: api-gateway-deployment
     spec:
       containers:
-      - name: apigateway
+      - name: api-gateway-deployment
         # Please fill in the path to your api gateway image stored in a docker registry.
         image: harbor.aks.au-poc.com/library/softwareag/apigateway-trial:10.5.0.2
         # The default pull policy is IfNotPresent which causes the Kubelet to skip pulling an image if it already exists.
-        # If you would like to always force a pull use "Always"        
-        imagePullPolicy: IfNotPresent
-        env:
-        # Please fill in your datas to access your external elasticsearch.
-        # Url pointing to your running elasticsearch for example: 127.0.0.1:9200
-        - name: apigw_elasticsearch_hosts
-          value: "elasticsearch-service:9200"
-        # Use true if your elasticsearch has https enabled, false if not.
-        - name: "apigw_elasticsearch_https_enabled"
-          value: "false"
-        - name: "apigw_elasticsearch_http_username"
-          value: null
-        - name: "apigw_elasticsearch_http_password"
-          value: null
-        # Ports used in the docker image, the default ports are 5555 and 9072
+        # If you would like to always force a pull use "Always"
+        imagePullPolicy: IfNotPresent 
+        # Ports used in the docker image, the default ports are 5555, 9072 and 9240
         ports:
         - containerPort: 5555
-          name: 5555tcp01
+          name: 5555tcp1
           protocol: TCP
         - containerPort: 9072
-          name: 9072tcp01
+          name: 9072tcp1
+          protocol: TCP
+        - containerPort: 9240
+          name: 9240tcp1
           protocol: TCP
         livenessProbe:
           failureThreshold: 4
-          initialDelaySeconds: 90
+          initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           tcpSocket:
@@ -63,7 +54,7 @@ spec:
             path: /rest/apigateway/health
             port: 5555
             scheme: HTTP
-          initialDelaySeconds: 120
+          initialDelaySeconds: 60
           periodSeconds: 10
           successThreshold: 2
           timeoutSeconds: 2

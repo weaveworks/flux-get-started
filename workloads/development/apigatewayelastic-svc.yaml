@@ -2,15 +2,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: elasticsearch-service
+  name: api-gatewayui-service
   namespace: development
   labels:
-    app.kubernetes.io/name: elasticsearch-deployment
+    app.kubernetes.io/name: apigateway
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-    - name: http1
+    - name: http
       port: 9200
       targetPort: 9200
+      protocol: TCP 
   selector:
-    app: elasticsearch-deployment
+    app: apigateway
