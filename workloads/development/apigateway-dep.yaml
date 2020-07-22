@@ -42,8 +42,8 @@ spec:
           name: 9240tcp1
           protocol: TCP
         livenessProbe:
-          failureThreshold: 4
-          initialDelaySeconds: 30
+          failureThreshold: 10
+          initialDelaySeconds: 90
           periodSeconds: 10
           successThreshold: 1
           tcpSocket:
