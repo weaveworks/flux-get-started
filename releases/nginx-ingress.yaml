@@ -15,7 +15,7 @@ spec:
     version: 1.24.7
   values:
     controller:
-      replicaCount: 2
+      replicaCount: 1
 
       resources:
         requests:
@@ -47,7 +47,7 @@ spec:
 
       autoscaling:
         enabled: true
-        minReplicas: 3
+        minReplicas: 1
         maxReplicas: 20
         targetCPUUtilizationPercentage: 50
         targetMemoryUtilizationPercentage: 50
