@@ -38,12 +38,12 @@ spec:
           service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
     
       metrics:
-        enabled: true
-        service:
-          annotations:
-            prometheus.io/scrape: "true"
-        serviceMonitor:
-            enabled: true
+        enabled: false
+        # service:
+        #   annotations:
+        #     prometheus.io/scrape: "true"
+        # serviceMonitor:
+        #     enabled: false
 
       autoscaling:
         enabled: true
