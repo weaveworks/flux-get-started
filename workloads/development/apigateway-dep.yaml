@@ -33,7 +33,7 @@ spec:
         # Please fill in your datas to access your external elasticsearch.
         # Url pointing to your running elasticsearch for example: 127.0.0.1:9200
         - name: apigw_elasticsearch_hosts
-          value: "elasticsearch-service.monitor:9200"
+          value: "elasticsearch-service:9200"
         # Use true if your elasticsearch has https enabled, false if not.
         - name: "apigw_elasticsearch_https_enabled"
           value: "false"

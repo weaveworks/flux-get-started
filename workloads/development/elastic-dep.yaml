@@ -1,0 +1,56 @@
+# Configuration for deploying an API Gateway with an elasticsearch as a sidecar container to a kubernetes cluster.
+# The cluster should provide at least 4 GB of main memory.
+#
+# The full documentation is available from the Software AG Documentation website: 
+# http://techcommunity.softwareag.com/ecosystem/documentation/webmethods/api_gateway/yai10-4/index.htm
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-deployment
+  labels:
+    app: elasticsearch-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch-deployment
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-deployment
+    spec:
+      containers:
+      # The elasticsearch container
+      - name: elastic-search
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: "xpack.security.enabled"
+          value: "false"
+        - name: "node.name"
+          value: "elasticsearch"
+        - name: "discovery.seed_hosts" 
+          value: "elasticsearch:9300"
+        - name: "cluster.initial_master_nodes"
+          value: "elasticsearch"
+        ports:
+        - containerPort: 9200
+          name: 9200tcp00
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 20
+          periodSeconds: 2
+          successThreshold: 1
+          tcpSocket:
+            port: 9200
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 25
+          periodSeconds: 2
+          successThreshold: 2
+          tcpSocket:
+            port: 9200
+          timeoutSeconds: 2
