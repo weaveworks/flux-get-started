@@ -50,12 +50,12 @@ spec:
             port: 5555
           timeoutSeconds: 2
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 5
           httpGet:
             path: /rest/apigateway/health
             port: 5555
             scheme: HTTP
-          initialDelaySeconds: 60
+          initialDelaySeconds: 90
           periodSeconds: 10
           successThreshold: 2
           timeoutSeconds: 2
