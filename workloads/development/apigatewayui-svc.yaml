@@ -5,7 +5,7 @@ metadata:
   name: api-gatewayui-service
   namespace: development
   labels:
-    app.kubernetes.io/name: apigateway
+    app.kubernetes.io/name: api-gateway-deployment
 spec:
   type: ClusterIP
   ports:
@@ -14,4 +14,4 @@ spec:
       targetPort: 9072
       protocol: TCP 
   selector:
-    app: apigateway
+    app: api-gateway-deployment
