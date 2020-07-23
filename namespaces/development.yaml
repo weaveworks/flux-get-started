@@ -3,4 +3,5 @@ kind: Namespace
 metadata:
   labels:
     name: development
+    istio-injection: enabled
   name: development
