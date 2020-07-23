@@ -129,7 +129,7 @@ spec:
   tls:
   - hosts:
     - api-gateway-development.aks.au-poc.com
-    secretName: api-gateway-tls-secret
+    secretName: api-gateway-development-tls-secret
   rules:
   - host: api-gateway-development.aks.au-poc.com
     http:

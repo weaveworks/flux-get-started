@@ -129,7 +129,7 @@ spec:
   tls:
   - hosts:
     - api-gateway-test.aks.au-poc.com
-    secretName: api-gateway-tls-secret
+    secretName: api-gateway-test-tls-secret
   rules:
   - host: api-gateway-test.aks.au-poc.com
     http:
