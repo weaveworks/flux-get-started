@@ -128,10 +128,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - api-gateway-dev.aks.au-poc.com
+    - api-gateway-test.aks.au-poc.com
     secretName: api-gateway-tls-secret
   rules:
-  - host: api-gateway-dev.aks.au-poc.com
+  - host: api-gateway-test.aks.au-poc.com
     http:
       paths:
         - path: /
