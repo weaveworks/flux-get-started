@@ -23,6 +23,8 @@ spec:
       labels:
         app: api-gateway-deployment
     spec:
+      nodeSelector:
+        environment: development
       containers:
       - name: api-gateway-deployment
         # Please fill in the path to your api gateway image stored in a docker registry.
