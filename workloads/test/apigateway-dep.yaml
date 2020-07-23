@@ -1,0 +1,144 @@
+# Configuration for deploying an API Gateway without elasticsearch to a kubernetes cluster.
+# An external elasticsearch needs to be up and running.
+# The cluster should provide at least 4 GB of main memory.
+#
+# The full documentation is available from the Software AG Documentation website: 
+# http://techcommunity.softwareag.com/ecosystem/documentation/webmethods/api_gateway/yai10-4/index.htm
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  namespace: test
+  labels:
+    app: api-gateway-deployment
+spec:
+  replicas: 1
+  
+  selector:
+    matchLabels:
+      app: api-gateway-deployment
+  template:
+    metadata:
+      labels:
+        app: api-gateway-deployment
+    spec:
+      nodeSelector:
+        environment: test
+      containers:
+      - name: api-gateway-deployment
+        # Please fill in the path to your api gateway image stored in a docker registry.
+        image: harbor.aks.au-poc.com/library/softwareag/apigateway-trial:10.5.0.2
+        # The default pull policy is IfNotPresent which causes the Kubelet to skip pulling an image if it already exists.
+        # If you would like to always force a pull use "Always"
+        imagePullPolicy: IfNotPresent 
+        # Ports used in the docker image, the default ports are 5555, 9072 and 9240
+        ports:
+        - containerPort: 5555
+          name: 5555tcp1
+          protocol: TCP
+        - containerPort: 9072
+          name: 9072tcp1
+          protocol: TCP
+        - containerPort: 9240
+          name: 9240tcp1
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 100
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5555
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 50
+          httpGet:
+            path: /rest/apigateway/health
+            port: 5555
+            scheme: HTTP
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 2
+---
+# An example service for the deployment above.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-service
+  namespace: test
+  labels:
+    app.kubernetes.io/name: api-gateway-deployment
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5555
+      targetPort: 5555
+      protocol: TCP 
+  selector:
+    app: api-gateway-deployment
+---
+# An example service for the deployment above.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gatewayui-service
+  namespace: test
+  labels:
+    app.kubernetes.io/name: api-gateway-deployment
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9072
+      targetPort: 9072
+      protocol: TCP 
+  selector:
+    app: api-gateway-deployment
+---
+# An example service for the deployment above.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway-elastic-service
+  namespace: test
+  labels:
+    app.kubernetes.io/name: api-gateway-deployment
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+      protocol: TCP 
+  selector:
+    app: api-gateway-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apigateway-ingress
+  namespace: test
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - api-gateway-dev.aks.au-poc.com
+    secretName: api-gateway-tls-secret
+  rules:
+  - host: api-gateway-dev.aks.au-poc.com
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: api-gateway-service
+            servicePort: 5555
+        - path: /apigatewayui/
+          backend:
+            serviceName: api-gatewayui-service
+            servicePort: 9072
