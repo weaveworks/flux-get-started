@@ -1,0 +1,190 @@
+---
+  apiVersion: helm.fluxcd.io/v1
+  kind: HelmRelease
+  metadata:
+    name: prometheus
+    namespace: monitoring
+    annotations:
+      fluxcd.io/automated: "false"
+      fluxcd.io/tag.chart-image: glob:3.1.1-debian-9-*
+  spec:
+    releaseName: prometheus
+    chart:
+      repository: https://kubernetes-charts.storage.googleapis.com
+      name: prometheus-operator
+      version: 8.13.8
+    values:
+      alertmanager:
+        alertmanagerSpec:
+          storage:
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 10Gi
+      coreDns:
+        enabled: true
+        service:
+          port: 9153
+          selector:
+            k8s-app: kube-dns
+          targetPort: 9153
+      grafana:
+        enabled: true
+        grafana.ini:
+          auth.github:
+            api_url: https://api.github.com/user
+            auth_url: https://github.com/login/oauth/authorize
+            client_id: a140d767bab810ac25fb
+            client_secret: 95831f406c1e29eb2fd9f20c39cb39362fd40b3d
+            enabled: true
+            token_url: https://github.com/login/oauth/access_token
+            allowed_organizations: tkww
+          server:
+            root_url: https://grafana.testing-back-strategies.us-east-1.k8.clusters.xogrp.com/
+        ingress:
+          annotations:
+            kubernetes.io/tls-acme: "true"
+          enabled: true
+          hosts:
+            - grafana.testing-back-strategies.us-east-1.k8.clusters.xogrp.com
+          tls:
+            - secretName: prometheus-grafana-ssl-secret
+              hosts:
+              - grafana.testing-back-strategies.us-east-1.k8.clusters.xogrp.com
+        persistence:
+          accessModes:
+          - ReadWriteOnce
+          enabled: true
+          size: 10Gi
+      kubelet:
+        serviceMonitor:
+          https: false
+      prometheus:
+        ingress:
+          annotations:
+            kubernetes.io/tls-acme: "true"
+          enabled: true
+          hosts:
+          - prometheus.testing-back-strategies.us-east-1.k8.clusters.xogrp.com
+          labels: {}
+          tls:
+            - secretName: prometheus-ssl-secret
+              hosts:
+              - prometheus.testing-back-strategies.us-east-1.k8.clusters.xogrp.com
+        prometheusSpec:
+          additionalScrapeConfigs:
+          - job_name: ingress-nginx-endpoints
+            kubernetes_sd_configs:
+            - namespaces:
+                names:
+                - ingress-nginx
+              role: pod
+            relabel_configs:
+            - action: keep
+              regex: true
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+            - action: replace
+              regex: (https?)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+              target_label: __scheme__
+            - action: replace
+              regex: (.+)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_path
+              target_label: __metrics_path__
+            - action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              source_labels:
+              - __address__
+              - __meta_kubernetes_pod_annotation_prometheus_io_port
+              target_label: __address__
+            - action: drop
+              regex: prometheus-server
+              source_labels:
+              - __meta_kubernetes_service_name
+          - job_name: ingress-nginx-endpoints-external
+            kubernetes_sd_configs:
+            - namespaces:
+                names:
+                - ingress-nginx-external
+              role: pod
+            relabel_configs:
+            - action: keep
+              regex: true
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+            - action: replace
+              regex: (https?)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+              target_label: __scheme__
+            - action: replace
+              regex: (.+)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_path
+              target_label: __metrics_path__
+            - action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              source_labels:
+              - __address__
+              - __meta_kubernetes_pod_annotation_prometheus_io_port
+              target_label: __address__
+            - action: drop
+              regex: prometheus-server
+              source_labels:
+              - __meta_kubernetes_service_name
+          - job_name: ingress-nginx-kube-system
+            kubernetes_sd_configs:
+            - namespaces:
+                names:
+                - kube-system
+              role: pod
+            relabel_configs:
+            - action: keep
+              regex: true
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+            - action: replace
+              regex: (https?)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+              target_label: __scheme__
+            - action: replace
+              regex: (.+)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_path
+              target_label: __metrics_path__
+            - action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              source_labels:
+              - __address__
+              - __meta_kubernetes_pod_annotation_prometheus_io_port
+              target_label: __address__
+            - action: drop
+              regex: prometheus-server
+              source_labels:
+              - __meta_kubernetes_service_name
+          storageSpec:
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 100Gi
+      prometheusOperator:
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: "1"
+          requests:
+            memory: 500Mi
+            cpu: 250m
