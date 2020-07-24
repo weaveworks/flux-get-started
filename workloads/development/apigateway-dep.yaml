@@ -12,19 +12,19 @@ metadata:
   namespace: development
   labels:
     app: api-gateway-deployment
-    version: 10.5.0.2
+    version: "10.5.0.2"
 spec:
   replicas: 1
   
   selector:
     matchLabels:
       app: api-gateway-deployment
-      version: 10.5.0.2
+      version: "10.5.0.2"
   template:
     metadata:
       labels:
         app: api-gateway-deployment
-        version: 10.5.0.2
+        version: "10.5.0.2"
     spec:
       nodeSelector:
         environment: development
@@ -74,6 +74,7 @@ metadata:
   labels:
     app.kubernetes.io/name: api-gateway-deployment
     app: api-gateway-deployment
+    version: "10.5.0.2"
 spec:
   type: ClusterIP
   ports:
@@ -93,6 +94,7 @@ metadata:
   labels:
     app.kubernetes.io/name: api-gateway-deployment
     app: api-gateway-deployment
+    version: "10.5.0.2"
 spec:
   type: ClusterIP
   ports:
@@ -112,6 +114,7 @@ metadata:
   labels:
     app.kubernetes.io/name: api-gateway-deployment
     app: api-gateway-deployment
+    version: "10.5.0.2"
 spec:
   type: ClusterIP
   ports:
