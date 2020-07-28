@@ -166,7 +166,7 @@ spec:
         environment: fleetman
       containers:
       - name: staff-service
-        image: richardchesterwood/istio-fleetman-staff-service:6
+        image: richardchesterwood/istio-fleetman-staff-service:6-placeholder
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice
