@@ -115,8 +115,8 @@ spec:
     app: nodetours
   type:  NodePort
   ports:
-  - name:  7777http
-    port:  7777
+  - name:  7070http
+    port:  7070
     targetPort: 7070
     protocol: TCP
 ---
@@ -141,4 +141,4 @@ spec:
         - path: /
           backend:
             serviceName: nodetours
-            servicePort: 7777
+            servicePort: 7070
