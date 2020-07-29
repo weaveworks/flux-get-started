@@ -64,6 +64,13 @@ spec:
           periodSeconds: 10
           successThreshold: 2
           timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 5Gi
+          requests:
+            cpu: 100m
+            memory: 4Gi
 ---
 # An example service for the deployment above.
 apiVersion: v1
