@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nodetours
+    version: "2.0"
+  name: nodetours
+  namespace: test
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nodetours
+      version: "2.0"
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nodetours
+        version: "2.0"
+    spec:
+      containers:
+      - env:
+        - name: DB_HOSTNAME_NO
+          value: localhost
+        - name: DB_PORT_NO
+          value: "27017"
+        image: przemekulik/nodetours:2.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 7777
+          timeoutSeconds: 2
+        name: nodetours-app
+        ports:
+        - containerPort: 7777
+          name: 7777http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 7777
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 2
+        resources: {}
+      - image: mongo:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 27017
+          timeoutSeconds: 2
+        name: nodetours-db
+        ports:
+        - containerPort: 27017
+          name: 27017http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 27017
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 2
+          timeoutSeconds: 2
+        resources: {}
+      - env:
+        - name: mcgw_api_gateway_user
+          value: Administrator
+        - name: mcgw_ports_http
+          value: "7070"
+        - name: mcgw_downloads_apis
+          value: nodetours
+        - name: mcgw_api_gateway_password
+          value: manage
+        - name: mcgw_api_gateway_url
+          value: http://api-gateway-service:5555
+        image: harbor.aks.au-poc.com/library/softwareag/microgateway-trial:10.5.0.2
+        imagePullPolicy: IfNotPresent
+        name: softwareag-nodetours-sidecar
+        ports:
+        - containerPort: 7070
+          protocol: TCP
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  nodetours
+  namespace: test
+  labels:
+    app: nodetours
+    service: nodetours
+spec:
+  selector:
+    app: nodetours
+  type:  NodePort
+  ports:
+  - name:  7777http
+    port:  7777
+    targetPort: 7070
+    protocol: TCP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nodetours-ingress
+  namespace: test
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - nodetours-test.aks.au-poc.com
+    secretName: nodetours-test-tls-secret
+  rules:
+  - host: nodetours-test.aks.au-poc.com
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: nodetours
+            servicePort: 7777
