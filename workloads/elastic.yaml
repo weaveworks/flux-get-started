@@ -2,10 +2,11 @@ apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: quickstart
+  namespace: monitor
 spec:
   version: 7.2.1
   nodeSets:
-  - name: default
+  - name: elastic
     count: 1
     config:
       node.master: true
