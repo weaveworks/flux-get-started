@@ -34,6 +34,21 @@ spec:
         # If you would like to always force a pull use "Always"
         imagePullPolicy: IfNotPresent 
         # Ports used in the docker image, the default ports are 5555, 9072 and 9240
+        env:
+        # Please fill in your datas to access your external elasticsearch.
+        # Url pointing to your running elasticsearch for example: 127.0.0.1:9200
+        - name: apigw_elasticsearch_hosts
+          value: "quickstart-es-elastic.monitor:9200"
+        # Use true if your elasticsearch has https enabled, false if not.
+        - name: "apigw_elasticsearch_https_enabled"
+          value: "false"
+        # Fill in your elasticsearch username for example: elastic
+        - name: "apigw_elasticsearch_http_username"
+          value: null
+        # Fill in your elasticsearch password for example: changeme
+        - name: "apigw_elasticsearch_http_password"
+          value: null
+        # Ports used in the docker image, the default ports are 5555 and 9072
         ports:
         - containerPort: 5555
           name: 5555tcp1
