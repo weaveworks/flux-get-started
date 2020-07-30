@@ -26,8 +26,6 @@ spec:
         app: api-gateway-deployment
         version: "10.5.0.2"
     spec:
-      nodeSelector:
-        environment: test
       containers:
       - name: api-gateway-deployment
         # Please fill in the path to your api gateway image stored in a docker registry.
