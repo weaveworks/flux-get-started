@@ -41,7 +41,7 @@ spec:
           value: "quickstart-es-http.monitor:9200"
         # Use true if your elasticsearch has https enabled, false if not.
         - name: "apigw_elasticsearch_https_enabled"
-          value: "false"
+          value: "true"
         # Fill in your elasticsearch username for example: elastic
         - name: "apigw_elasticsearch_http_username"
           value: "elastic"
