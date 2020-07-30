@@ -38,16 +38,16 @@ spec:
         # Please fill in your datas to access your external elasticsearch.
         # Url pointing to your running elasticsearch for example: 127.0.0.1:9200
         - name: apigw_elasticsearch_hosts
-          value: "quickstart-es-elastic.monitor:9200"
+          value: "quickstart-es-http.monitor:9200"
         # Use true if your elasticsearch has https enabled, false if not.
         - name: "apigw_elasticsearch_https_enabled"
           value: "false"
         # Fill in your elasticsearch username for example: elastic
         - name: "apigw_elasticsearch_http_username"
-          value: null
+          value: "elastic"
         # Fill in your elasticsearch password for example: changeme
         - name: "apigw_elasticsearch_http_password"
-          value: null
+          value: "qYmeWQHCAVuR5494xO891501"
         # Ports used in the docker image, the default ports are 5555 and 9072
         ports:
         - containerPort: 5555
